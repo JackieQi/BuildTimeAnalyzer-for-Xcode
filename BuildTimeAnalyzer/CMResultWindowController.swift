@@ -22,6 +22,7 @@ class CMResultWindowController: NSWindowController {
     @IBOutlet weak var buildDurationTextField: NSTextField!
     @IBOutlet weak var cancelButton: NSButton!
     @IBOutlet weak var searchField: NSSearchField!
+    @IBOutlet weak var totalTimeTextField: NSTextField!
 
     var dataSource: [CMCompileMeasure] = []
     var filteredData: [CMCompileMeasure]? = nil
@@ -97,6 +98,7 @@ class CMResultWindowController: NSWindowController {
             showInstructions(stateName == CMProcessingState.failedString)
             progressIndicator.hidden = true
             cancelButton.hidden = true
+            updateTotalTime()
             
         case .waiting(let shouldIndicate):
             if shouldIndicate {
@@ -111,6 +113,15 @@ class CMResultWindowController: NSWindowController {
             cancelButton.hidden = true
         }
         searchField.hidden = !cancelButton.hidden
+    }
+  
+    func updateTotalTime() {
+      var totalTime: Double = 0
+      for measure in dataSource {
+        totalTime += measure.time
+      }
+      
+      totalTimeTextField.stringValue = String(format: "%.2fs", totalTime/1000)
     }
     
     func showInstructions(show: Bool) {
